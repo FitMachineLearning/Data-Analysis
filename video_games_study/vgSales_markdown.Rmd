@@ -1,0 +1,50 @@
+---
+title: "VideoGame_Markdown2"
+author: "Michel Aka"
+date: "2022-11-14"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Video Game Analysis by Michel Aka
+
+Analyis of video games sales from 1970.
+
+## Data Processes
+
+Data was downloaded from Kaggle https://www.kaggle.com/datasets/ashaheedq/video-games-sales-2019
+
+
+```{r, echo=FALSE, results=FALSE, fig.keep='all'}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+vgsales = read.csv("vgsales-12-4-2019.csv")
+
+```
+
+Backup the dataset in case we make an error.
+We also notice that the Total_Shipped column is missing values. We will use the Global_Sales wherever possible and replace the other missing values with 0.0. 
+
+```{r , echo=FALSE, results=FALSE ,fig.keep='all'}
+ori_vgsales = vgsales
+
+vgsales$Total_Shipped[!is.na(vgsales$Global_Sales)] = vgsales$Global_Sales[!is.na(vgsales$Global_Sales)]
+
+vgsales$Total_Shipped[is.na(vgsales$Total_Shipped)] = 0.0
+
+yearly_sales = vgsales %>% group_by(Year) %>% summarise( yearly_sales2 = sum(Total_Shipped))
+
+```
+
+## Visualizations
+
+### yearly sale trends
+
+
+```{r , echo=FALSE, results=FALSE, fig.keep='all'}
+ggplot(yearly_sales, aes(x=yearly_sales$Year, yearly_sales$yearly_sales2, group=1)) + geom_line() + geom_point()
+```
